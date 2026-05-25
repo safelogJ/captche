@@ -251,8 +251,8 @@ function checkTime() {
   const minuteDeg = getRotation(minuteHand);
 
   /* перевод углов в условное время */
-  const hours = Math.floor((hourDeg % 360) / 30);
-  const minutes = Math.floor((minuteDeg % 360) / 6);
+  const hours = Math.floor((hourDeg % 360) / 900);
+  const minutes = Math.floor((minuteDeg % 360) / 36);
 
   alert(`Time: ${hours}:${minutes}`);
 }
