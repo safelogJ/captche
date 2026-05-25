@@ -1,131 +1,156 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Clock Captcha</title>
 
 <style>
-  /* =========================
-     ОБЩИЙ ФОН СТРАНИЦЫ
-     ========================= */
-  body {
+
+/* =====================================
+   СТРАНИЦА
+===================================== */
+body {
     margin: 0;
     height: 100vh;
-    background: #444fff; /* фон страницы (можешь менять на любой) */
     display: flex;
     justify-content: center;
     align-items: center;
-    font-family: sans-serif;
-    color: white;
-  }
+    background: #444fff;
+    font-family: Arial, sans-serif;
+}
 
-  /* =========================
-     ОСНОВА ЧАСОВ
-     ========================= */
-  .clock {
-    width: 300px;        /* размер всего циферблата */
+/* =====================================
+   ОСНОВНОЙ КОНТЕЙНЕР
+===================================== */
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+}
+
+/* =====================================
+   ЦИФЕРБЛАТ
+===================================== */
+.clock {
+
+    width: 300px;
     height: 300px;
-    border: 6px solid #444; /* цвет и толщина рамки часов */
-    border-radius: 50%;     /* делает круг */
+    border-radius: 50%;
+    border: 6px solid #444;
+    background: #1a1a1a;
     position: relative;
-    background: #1a1a1a;    /* фон внутри часов */
-  }
+}
 
-  /* =========================
-     ОБЩИЙ СТИЛЬ СТРЕЛОК
-     ========================= */
-  .hand {
+/* =====================================
+   ОБЩИЙ СТИЛЬ СТРЕЛОК
+===================================== */
+.hand {
+
     position: absolute;
-
-    /* центр часов — точка вращения */
     left: 50%;
     bottom: 50%;
     transform-origin: bottom center;
-
-    /* начальный угол */
-    transform: rotate(0deg);
-
-    border-radius: 4px;
+    border-radius: 10px;
     cursor: grab;
-  }
+}
 
-  /* =========================
-     ЧАСОВАЯ СТРЕЛКА
-     ========================= */
-  .hour {
-    width: 26px;          /* толщина стрелки */
-    height: 151px;        /* длина стрелки */
-    background: #f5f5f5; /* цвет стрелки */
-  }
+/* =====================================
+   ЧАСОВАЯ СТРЕЛКА
+===================================== */
+.hour {
+    width: 114px;
+    height: 151px;
+    background: white;
+}
 
-  /* =========================
-     МИНУТНАЯ СТРЕЛКА
-     ========================= */
-  .minute {
-    width: 14px;          /* толщина стрелки */
-    height: 151px;       /* длина стрелки */
-    background: #aaa;    /* цвет стрелки */
-  }
+/* =====================================
+   МИНУТНАЯ СТРЕЛКА
+===================================== */
+.minute {
+    width: 90px;
+    height: 151px;
+    background: #aaaaaa;
+}
 
-  /* =========================
-     ЦЕНТР ЧАСОВ (точка)
-     ========================= */
-  .center-dot {
-    width: 92px;          /* размер точки */
-    height: 92px;
-    background: white;      /* цвет центра */
+/* =====================================
+   ЦЕНТР ЧАСОВ
+===================================== */
+.center-dot {
+    width: 30px;
+    height: 30px;
     border-radius: 50%;
+    background: red;
     position: absolute;
-
-    /* центрирование */
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-  }
+}
 
-  /* =========================
-     КНОПКА ПРОВЕРКИ
-     ========================= */
-  .btn {
-    position: absolute;
-    bottom: 20px;
+/* =====================================
+   ТЕКСТОВЫЕ БЛОКИ
+===================================== */
+.info {
+    color: black;
+    font-size: 20px;
+    min-width: 250px;
+    text-align: center;
+}
 
-    padding: 10px 20px;
-    background: #333;   /* цвет кнопки */
-    border: 1px solid #555;
+/* =====================================
+   КНОПКА
+===================================== */
+button {
+
+    padding: 12px 24px;
+    border: none;
+    background: #333;
     color: white;
-
     cursor: pointer;
-  }
+    border-radius: 8px;
+    font-size: 16px;
+}
+
+button:hover {
+    background: #555;
+}
+
 </style>
 </head>
 
 <body>
 
-<!-- =========================
-     ОСНОВНОЙ КОНТЕЙНЕР ЧАСОВ
-     ========================= -->
-<div class="clock" id="clock">
+<div class="container">
 
-  <!-- ЧАСОВАЯ СТРЕЛКА -->
-  <div class="hand hour" id="hourHand"></div>
+    <!-- ЦИФЕРБЛАТ -->
+    <div class="clock" id="clock">
 
-  <!-- МИНУТНАЯ СТРЕЛКА -->
-  <div class="hand minute" id="minuteHand"></div>
+        <div class="hand hour" id="hourHand"></div>
 
-  <!-- ЦЕНТР -->
-  <div class="center-dot"></div>
+        <div class="hand minute" id="minuteHand"></div>
+
+        <div class="center-dot"></div>
+
+    </div>
+
+    <!-- ВРЕМЯ -->
+    <div class="info" id="currentTime">
+        GMT+3 00:00:00
+    </div>
+
+    <!-- КООРДИНАТЫ -->
+    <div class="info" id="debugAngles">
+        hour: 0° | minute: 0°
+    </div>
+
+    <!-- КНОПКА -->
+    <button onclick="checkTime()">
+        Check
+    </button>
+
 </div>
-  
-  <div id="infoPanel" style="margin-top: 20px; text-align:center;">
-  <div id="timezoneInfo">GMT +3</div>
-  <div id="currentTime">--:--:--</div>
-  <div id="debugAngles">hour: 0°, minute: 0°</div>
-</div>
-
-<!-- КНОПКА ПРОВЕРКИ ВРЕМЕНИ -->
-<button class="btn" onclick="checkTime()">Check</button>
 
 <script>
 /* =========================
