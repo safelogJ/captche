@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -58,6 +57,7 @@ body {
     transform: translateX(-50%);
     user-select: none;
    -webkit-user-drag: none;
+   touch-action: none;
 }
 
 /* =====================================
@@ -214,24 +214,18 @@ function onMove(e) {
 }
 
 /* =========================
-   MOUSE EVENTS
-   ========================= */
-hourHand.addEventListener("mousedown", () => activeHand = "hour");
-minuteHand.addEventListener("mousedown", () => activeHand = "minute");
-document.addEventListener("mouseup", () => activeHand = null);
-document.addEventListener("mousemove", onMove);
-
-/* =========================
-   TOUCH EVENTS (телефон)
-   ========================= */
-hourHand.addEventListener("touchstart", () => activeHand = "hour");
-minuteHand.addEventListener("touchstart", () => activeHand = "minute");
-document.addEventListener("touchend", () => activeHand = null);
-
-document.addEventListener("touchmove", (e) => {
-  const touch = e.touches[0];
-  onMove(touch);
+   POINTER EVENTS
+========================= */
+hourHand.addEventListener("pointerdown", () => {
+    activeHand = "hour";
 });
+minuteHand.addEventListener("pointerdown", () => {
+    activeHand = "minute";
+});
+document.addEventListener("pointerup", () => {
+    activeHand = null;
+});
+document.addEventListener("pointermove", onMove);
 
 /* =========================
    ПОЛУЧЕНИЕ ТЕКУЩЕГО УГЛА СТРЕЛКИ
@@ -251,12 +245,10 @@ function getRotation(el) {
    ПРОВЕРКА ВРЕМЕНИ
    ========================= */
 function checkTime() {
-    let hours =
-        Math.round(hourAngle / 30);
+    let hours = Math.round(getRotation(hourHand) / 30);
     if (hours === 0)
         hours = 12;
-    let minutes =
-        Math.round(minuteAngle / 6);
+    let minutes = Math.floor(getRotation(minuteHand) / 6);
     if (minutes < 10)
         minutes = "0" + minutes;
     alert(`Time: ${hours}:${minutes}`);
@@ -265,6 +257,10 @@ function checkTime() {
   function updateDebug() {
   const hourDeg = Math.floor(getRotation(hourHand) / 30);
   const minuteDeg = Math.floor(getRotation(minuteHand) / 6);
+     if (hourDeg < 10)
+        hourDeg = "0" + hourDeg;
+     if (minuteDeg < 10)
+        minuteDeg = "0" + minuteDeg;
 
   // показываем углы
   document.getElementById("debugAngles").innerText =
