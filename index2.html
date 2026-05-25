@@ -272,6 +272,41 @@ requestAnimationFrame(animate);
    INIT
 ========================= */
 render();
+
+   function updateDebug() {
+  const hourDeg = Math.round(getRotation(hourHand) / 30);
+  const minuteDeg = Math.floor(getRotation(minuteHand) / 6);
+
+  // показываем углы
+let displayHours = hourDeg;
+
+if (displayHours === 0)
+    displayHours = 12;
+if (displayHours < 10)
+    displayHours = "0" + displayHours;
+
+let displayMinutes = minuteDeg;
+
+if (displayMinutes < 10)
+    displayMinutes = "0" + displayMinutes;
+
+document.getElementById("debugAngles").innerText =
+  `${displayHours} : ${displayMinutes}`;
+
+  // текущее время браузера
+  const now = new Date();
+
+  // пример GMT+3 (ручной сдвиг)
+  const utc = now.getTime() + now.getTimezoneOffset() * 60000;
+  const gmt3 = new Date(utc + 3 * 3600000);
+
+  document.getElementById("currentTime").innerText =
+    gmt3.toTimeString().split(" ")[0];
+
+  requestAnimationFrame(updateDebug);
+}
+
+updateDebug();
 </script>
 
 
