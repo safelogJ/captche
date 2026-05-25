@@ -247,25 +247,20 @@ function getRotation(el) {
    ПРОВЕРКА ВРЕМЕНИ
    ========================= */
 function checkTime() {
-
     let hours =
         Math.round(hourAngle / 30);
-
     if (hours === 0)
         hours = 12;
-
     let minutes =
         Math.round(minuteAngle / 6);
-
     if (minutes < 10)
         minutes = "0" + minutes;
-
     alert(`Time: ${hours}:${minutes}`);
 }
 
   function updateDebug() {
-  const hourDeg = (getRotation(hourHand) / 15);
-  const minuteDeg = (getRotation(minuteHand) / 6);
+  const hourDeg = Math.round(getRotation(hourHand) / 30);
+  const minuteDeg = Math.round(getRotation(minuteHand) / 6);
 
   // показываем углы
   document.getElementById("debugAngles").innerText =
