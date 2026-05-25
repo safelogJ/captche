@@ -90,6 +90,17 @@ body {
     transform: translate(-50%, -50%);
 }
 
+   .center-dot-black {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: black;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
 /* =====================================
    ТЕКСТОВЫЕ БЛОКИ
 ===================================== */
@@ -127,13 +138,10 @@ button:hover {
 
     <!-- ЦИФЕРБЛАТ -->
     <div class="clock" id="clock">
-
         <div class="hand hour" id="hourHand"></div>
-
         <div class="hand minute" id="minuteHand"></div>
-
         <div class="center-dot"></div>
-
+       <div class="center-dot-black"></div>
     </div>
 
     <!-- ВРЕМЯ -->
