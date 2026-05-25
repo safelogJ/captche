@@ -48,13 +48,14 @@ body {
    ОБЩИЙ СТИЛЬ СТРЕЛОК
 ===================================== */
 .hand {
-
     position: absolute;
     left: 50%;
     bottom: 50%;
     transform-origin: bottom center;
     border-radius: 10px;
     cursor: grab;
+    /* центрирование стрелки */
+    transform: translateX(-50%);
 }
 
 /* =====================================
@@ -192,7 +193,7 @@ function getAngle(e) {
    ПРИМЕНЕНИЕ ПОВОРОТА
    ========================= */
 function setRotation(el, angle) {
-  el.style.transform = `rotate(${angle}deg)`;
+    el.style.transform = `translateX(-50%) rotate(${angle}deg)`;
 }
 
 /* =========================
