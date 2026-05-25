@@ -121,6 +121,12 @@
 <!-- КНОПКА ПРОВЕРКИ ВРЕМЕНИ -->
 <button class="btn" onclick="checkTime()">Check</button>
 
+  <div id="infoPanel" style="margin-top: 20px; text-align:center;">
+  <div id="timezoneInfo">GMT +3</div>
+  <div id="currentTime">--:--:--</div>
+  <div id="debugAngles">hour: 0°, minute: 0°</div>
+</div>
+
 <script>
 /* =========================
    ПОЛУЧАЕМ ЭЛЕМЕНТЫ
@@ -216,6 +222,29 @@ function checkTime() {
 
   alert(`Time: ${hours}:${minutes}`);
 }
+
+  function updateDebug() {
+  const hourDeg = getRotation(hourHand);
+  const minuteDeg = getRotation(minuteHand);
+
+  // показываем углы
+  document.getElementById("debugAngles").innerText =
+    `hour: ${hourDeg.toFixed(1)}°, minute: ${minuteDeg.toFixed(1)}°`;
+
+  // текущее время браузера
+  const now = new Date();
+
+  // пример GMT+3 (ручной сдвиг)
+  const utc = now.getTime() + now.getTimezoneOffset() * 60000;
+  const gmt3 = new Date(utc + 3 * 3600000);
+
+  document.getElementById("currentTime").innerText =
+    gmt3.toTimeString().split(" ")[0];
+
+  requestAnimationFrame(updateDebug);
+}
+
+updateDebug();
 </script>
 
 </body>
