@@ -1,123 +1,3 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Clock Captcha</title>
-
-<style>
-body {
-    margin: 0;
-    height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background: #444fff;
-    font-family: Arial, sans-serif;
-}
-
-.container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 15px;
-}
-
-.clock {
-    width: 301px;
-    height: 301px;
-    border-radius: 50%;
-    border: 5px solid #444;
-    background: #1a1a1a;
-    position: relative;
-}
-
-.hand {
-    position: absolute;
-    left: 50%;
-    bottom: 50%;
-    transform-origin: bottom center;
-    border-radius: 10px;
-    cursor: grab;
-    transform: translateX(-50%);
-    user-select: none;
-    -webkit-user-drag: none;
-    touch-action: none;
-}
-
-.hour {
-    width: 11px;
-    height: 153px;
-    background: #3b3b3b;
-}
-
-.minute {
-    width: 11px;
-    height: 153px;
-    background: #444;
-}
-
-.center-dot {
-    width: 100px;
-    height: 100px;
-    border-radius: 50%;
-    background: red;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-}
-
-.center-dot-black {
-    width: 10px;
-    height: 10px;
-    border-radius: 50%;
-    background: black;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-}
-
-.info {
-    color: black;
-    font-size: 20px;
-    min-width: 250px;
-    text-align: center;
-}
-
-button {
-    padding: 12px 24px;
-    border: none;
-    background: #333;
-    color: white;
-    cursor: pointer;
-    border-radius: 8px;
-}
-
-button:hover {
-    background: #555;
-}
-</style>
-</head>
-
-<body>
-
-<div class="container">
-
-    <div class="clock" id="clock">
-        <div class="hand hour" id="hourHand"></div>
-        <div class="hand minute" id="minuteHand"></div>
-        <div class="center-dot"></div>
-        <div class="center-dot-black"></div>
-    </div>
-
-    <div class="info" id="debugAngles"></div>
-
-    <button onclick="checkTime()">Check</button>
-
-</div>
-
 <script>
 const hourHand = document.getElementById("hourHand");
 const minuteHand = document.getElementById("minuteHand");
@@ -129,27 +9,24 @@ minuteHand.ondragstart = () => false;
 /* =========================
    STATE (ВАЖНО)
 ========================= */
-let hourAngle = 270;   // 9 часов
-let minuteAngle = 90;   // 15 минут
+let hourAngle = 270;     // старт 9 часов
+let minuteAngle = 90;    // старт 15 минут
+
 let activeHand = null;
 
 /* =========================
-   РЕНДЕР
+   РЕНДЕР СТРЕЛОК
 ========================= */
 function render() {
-    setRotation(hourHand, hourAngle);
-    setRotation(minuteHand, minuteAngle);
+    hourHand.style.transform =
+        `translateX(-50%) rotate(${hourAngle}deg)`;
+
+    minuteHand.style.transform =
+        `translateX(-50%) rotate(${minuteAngle}deg)`;
 }
 
 /* =========================
-   SET ROTATION
-========================= */
-function setRotation(el, angle) {
-    el.style.transform = `translateX(-50%) rotate(${angle}deg)`;
-}
-
-/* =========================
-   DRAG
+   МЫШЬ → УГОЛ
 ========================= */
 function getAngle(e) {
     const rect = clock.getBoundingClientRect();
@@ -160,6 +37,9 @@ function getAngle(e) {
     return Math.atan2(y, x) * 180 / Math.PI + 90;
 }
 
+/* =========================
+   DRAG
+========================= */
 function onMove(e) {
     if (!activeHand) return;
 
@@ -174,64 +54,53 @@ function onMove(e) {
     render();
 }
 
-hourHand.addEventListener("pointerdown", () => activeHand = "hour");
-minuteHand.addEventListener("pointerdown", () => activeHand = "minute");
-document.addEventListener("pointerup", () => activeHand = null);
+/* =========================
+   POINTER EVENTS
+========================= */
+hourHand.addEventListener("pointerdown", () => {
+    activeHand = "hour";
+});
+
+minuteHand.addEventListener("pointerdown", () => {
+    activeHand = "minute";
+});
+
+document.addEventListener("pointerup", () => {
+    activeHand = null;
+});
+
 document.addEventListener("pointermove", onMove);
 
 /* =========================
-   TICK (раз в секунду)
+   ПЛАВНОЕ СИНХРОННОЕ ДВИЖЕНИЕ
 ========================= */
-setInterval(() => {
+let last = performance.now();
+
+function animate(now) {
+    const delta = now - last;
+    last = now;
 
     if (!activeHand) {
 
-        // минутная стрелка двигается на 6° каждую секунду
-        minuteAngle += 6;
+        // одна скорость для обеих стрелок
+        const speed = 0.03; // регулирует плавность/скорость
 
-        // часовая двигается синхронно (5 минут = 30°)
-        hourAngle += 0.5;
+        hourAngle += delta * speed;
+        minuteAngle += delta * speed;
 
-        // нормализация
-        minuteAngle %= 360;
         hourAngle %= 360;
+        minuteAngle %= 360;
 
         render();
     }
 
-}, 1000);
-
-/* =========================
-   DEBUG
-========================= */
-function updateDebug() {
-
-    const hours = Math.round(hourAngle / 30);
-    const minutes = Math.round(minuteAngle / 6);
-
-    document.getElementById("debugAngles").innerText =
-        `H: ${hours} | M: ${minutes}`;
-
-    requestAnimationFrame(updateDebug);
+    requestAnimationFrame(animate);
 }
 
-updateDebug();
-
-/* =========================
-   CHECK
-========================= */
-function checkTime() {
-    const hours = Math.round(hourAngle / 30);
-    const minutes = Math.round(minuteAngle / 6);
-
-    alert(`Time: ${hours}:${minutes}`);
-}
+requestAnimationFrame(animate);
 
 /* =========================
    INITIAL RENDER
 ========================= */
 render();
 </script>
-
-</body>
-</html>
