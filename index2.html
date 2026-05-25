@@ -273,6 +273,18 @@ requestAnimationFrame(animate);
 ========================= */
 render();
 
+
+   function getRotation(el) {
+  const style = window.getComputedStyle(el);
+  const matrix = new DOMMatrixReadOnly(style.transform);
+
+  const angle = Math.round(
+    Math.atan2(matrix.b, matrix.a) * (180 / Math.PI)
+  );
+
+  return (angle + 360) % 360;
+}
+
    function updateDebug() {
   const hourDeg = Math.round(getRotation(hourHand) / 30);
   const minuteDeg = Math.floor(getRotation(minuteHand) / 6);
