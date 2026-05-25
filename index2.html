@@ -64,7 +64,7 @@ body {
    ЧАСОВАЯ СТРЕЛКА
 ===================================== */
 .hour {
-    width: 9px;
+    width: 11px;
     height: 153px;
     background: #3b3b3b;
 }
@@ -73,7 +73,7 @@ body {
    МИНУТНАЯ СТРЕЛКА
 ===================================== */
 .minute {
-    width: 9px;
+    width: 11px;
     height: 153px;
     background: #444;
 }
@@ -255,12 +255,24 @@ function checkTime() {
 }
 
   function updateDebug() {
-  const hourDeg = Math.floor(getRotation(hourHand) / 30);
+  const hourDeg = Math.round(getRotation(hourHand) / 30);
   const minuteDeg = Math.floor(getRotation(minuteHand) / 6);
 
   // показываем углы
-  document.getElementById("debugAngles").innerText =
-    `${hourDeg.toFixed(0)} : ${minuteDeg.toFixed(0)}`;
+let displayHours = hourDeg;
+
+if (displayHours === 0)
+    displayHours = 12;
+if (displayHours < 10)
+    displayHours = "0" + displayHours;
+
+let displayMinutes = minuteDeg;
+
+if (displayMinutes < 10)
+    displayMinutes = "0" + displayMinutes;
+
+document.getElementById("debugAngles").innerText =
+  `${displayHours} : ${displayMinutes}`;
 
   // текущее время браузера
   const now = new Date();
