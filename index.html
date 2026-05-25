@@ -263,6 +263,8 @@ let displayHours = hourDeg;
 
 if (displayHours === 0)
     displayHours = 12;
+if (displayHours < 10)
+    displayHours = "0" + displayHours;
 
 let displayMinutes = minuteDeg;
 
