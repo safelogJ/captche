@@ -255,12 +255,22 @@ function checkTime() {
 }
 
   function updateDebug() {
-  const hourDeg = Math.floor(getRotation(hourHand) / 30);
+  const hourDeg = Math.round(getRotation(hourHand) / 30);
   const minuteDeg = Math.floor(getRotation(minuteHand) / 6);
 
   // показываем углы
-  document.getElementById("debugAngles").innerText =
-    `${hourDeg.toFixed(0)} : ${minuteDeg.toFixed(0)}`;
+let displayHours = hourDeg;
+
+if (displayHours === 0)
+    displayHours = 12;
+
+let displayMinutes = minuteDeg;
+
+if (displayMinutes < 10)
+    displayMinutes = "0" + displayMinutes;
+
+document.getElementById("debugAngles").innerText =
+  `${displayHours} : ${displayMinutes}`;
 
   // текущее время браузера
   const now = new Date();
