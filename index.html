@@ -259,8 +259,8 @@ function checkTime() {
 }
 
   function updateDebug() {
-  const hourDeg = Math.round(getRotation(hourHand) / 30);
-  const minuteDeg = Math.round(getRotation(minuteHand) / 6);
+  const hourDeg = Math.floor(getRotation(hourHand) / 30);
+  const minuteDeg = Math.floor(getRotation(minuteHand) / 6);
 
   // показываем углы
   document.getElementById("debugAngles").innerText =
