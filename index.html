@@ -6,10 +6,13 @@
 <title>Clock Captcha</title>
 
 <style>
+  /* =========================
+     ОБЩИЙ ФОН СТРАНИЦЫ
+     ========================= */
   body {
     margin: 0;
     height: 100vh;
-    background: #111;
+    background: #111; /* фон страницы (можешь менять на любой) */
     display: flex;
     justify-content: center;
     align-items: center;
@@ -17,54 +20,82 @@
     color: white;
   }
 
+  /* =========================
+     ОСНОВА ЧАСОВ
+     ========================= */
   .clock {
-    width: 300px;
+    width: 300px;        /* размер всего циферблата */
     height: 300px;
-    border: 6px solid #444;
-    border-radius: 50%;
+    border: 6px solid #444; /* цвет и толщина рамки часов */
+    border-radius: 50%;     /* делает круг */
     position: relative;
+    background: #1a1a1a;    /* фон внутри часов */
   }
 
+  /* =========================
+     ОБЩИЙ СТИЛЬ СТРЕЛОК
+     ========================= */
   .hand {
     position: absolute;
+
+    /* центр часов — точка вращения */
     left: 50%;
     bottom: 50%;
     transform-origin: bottom center;
+
+    /* начальный угол */
     transform: rotate(0deg);
-    background: white;
+
     border-radius: 4px;
     cursor: grab;
   }
 
+  /* =========================
+     ЧАСОВАЯ СТРЕЛКА
+     ========================= */
   .hour {
-    width: 6px;
-    height: 80px;
-    background: #f5f5f5;
+    width: 6px;          /* толщина стрелки */
+    height: 80px;        /* длина стрелки */
+    background: #f5f5f5; /* цвет стрелки */
   }
 
+  /* =========================
+     МИНУТНАЯ СТРЕЛКА
+     ========================= */
   .minute {
-    width: 4px;
-    height: 110px;
-    background: #aaa;
+    width: 4px;          /* толщина стрелки */
+    height: 110px;       /* длина стрелки */
+    background: #aaa;    /* цвет стрелки */
   }
 
+  /* =========================
+     ЦЕНТР ЧАСОВ (точка)
+     ========================= */
   .center-dot {
-    width: 12px;
+    width: 12px;          /* размер точки */
     height: 12px;
-    background: red;
+    background: red;      /* цвет центра */
     border-radius: 50%;
     position: absolute;
+
+    /* центрирование */
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
   }
 
+  /* =========================
+     КНОПКА ПРОВЕРКИ
+     ========================= */
   .btn {
     position: absolute;
     bottom: 20px;
+
     padding: 10px 20px;
-    background: #333;
+    background: #333;   /* цвет кнопки */
     border: 1px solid #555;
+    color: white;
+
     cursor: pointer;
   }
 </style>
@@ -72,36 +103,65 @@
 
 <body>
 
+<!-- =========================
+     ОСНОВНОЙ КОНТЕЙНЕР ЧАСОВ
+     ========================= -->
 <div class="clock" id="clock">
+
+  <!-- ЧАСОВАЯ СТРЕЛКА -->
   <div class="hand hour" id="hourHand"></div>
+
+  <!-- МИНУТНАЯ СТРЕЛКА -->
   <div class="hand minute" id="minuteHand"></div>
+
+  <!-- ЦЕНТР -->
   <div class="center-dot"></div>
 </div>
 
+<!-- КНОПКА ПРОВЕРКИ ВРЕМЕНИ -->
 <button class="btn" onclick="checkTime()">Check</button>
 
 <script>
+/* =========================
+   ПОЛУЧАЕМ ЭЛЕМЕНТЫ
+   ========================= */
 const hourHand = document.getElementById("hourHand");
 const minuteHand = document.getElementById("minuteHand");
 const clock = document.getElementById("clock");
 
+/* какая стрелка сейчас двигается */
 let activeHand = null;
 
+/* =========================
+   ВЫЧИСЛЕНИЕ УГЛА МЫШИ
+   ========================= */
 function getAngle(e) {
   const rect = clock.getBoundingClientRect();
+
+  /* координаты курсора относительно центра часов */
   const x = e.clientX - rect.left - rect.width / 2;
   const y = e.clientY - rect.top - rect.height / 2;
+
+  /* перевод в угол (в градусах) */
   return Math.atan2(y, x) * 180 / Math.PI + 90;
 }
 
+/* =========================
+   ПРИМЕНЕНИЕ ПОВОРОТА
+   ========================= */
 function setRotation(el, angle) {
   el.style.transform = `rotate(${angle}deg)`;
 }
 
+/* =========================
+   ДВИЖЕНИЕ МЫШИ / ТАЧА
+   ========================= */
 function onMove(e) {
   if (!activeHand) return;
+
   const angle = getAngle(e);
 
+  /* выбор стрелки */
   if (activeHand === "hour") {
     setRotation(hourHand, angle);
   } else if (activeHand === "minute") {
@@ -109,35 +169,52 @@ function onMove(e) {
   }
 }
 
+/* =========================
+   MOUSE EVENTS
+   ========================= */
 hourHand.addEventListener("mousedown", () => activeHand = "hour");
 minuteHand.addEventListener("mousedown", () => activeHand = "minute");
 document.addEventListener("mouseup", () => activeHand = null);
 document.addEventListener("mousemove", onMove);
 
-// Touch support
+/* =========================
+   TOUCH EVENTS (телефон)
+   ========================= */
 hourHand.addEventListener("touchstart", () => activeHand = "hour");
 minuteHand.addEventListener("touchstart", () => activeHand = "minute");
 document.addEventListener("touchend", () => activeHand = null);
+
 document.addEventListener("touchmove", (e) => {
   const touch = e.touches[0];
   onMove(touch);
 });
 
+/* =========================
+   ПОЛУЧЕНИЕ ТЕКУЩЕГО УГЛА СТРЕЛКИ
+   ========================= */
+function getRotation(el) {
+  const style = window.getComputedStyle(el);
+  const matrix = new DOMMatrixReadOnly(style.transform);
+
+  const angle = Math.round(
+    Math.atan2(matrix.b, matrix.a) * (180 / Math.PI)
+  );
+
+  return (angle + 360) % 360;
+}
+
+/* =========================
+   ПРОВЕРКА ВРЕМЕНИ
+   ========================= */
 function checkTime() {
   const hourDeg = getRotation(hourHand);
   const minuteDeg = getRotation(minuteHand);
 
+  /* перевод углов в условное время */
   const hours = Math.floor((hourDeg % 360) / 30);
   const minutes = Math.floor((minuteDeg % 360) / 6);
 
   alert(`Time: ${hours}:${minutes}`);
-}
-
-function getRotation(el) {
-  const style = window.getComputedStyle(el);
-  const matrix = new DOMMatrixReadOnly(style.transform);
-  const angle = Math.round(Math.atan2(matrix.b, matrix.a) * (180 / Math.PI));
-  return (angle + 360) % 360;
 }
 </script>
 
