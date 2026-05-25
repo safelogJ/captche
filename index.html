@@ -268,15 +268,8 @@ function checkTime() {
   const minuteDeg = getRotation(minuteHand);
 
   // показываем углы
-
-     const hours =
-    Math.round(hourAngle / 30);
-
-const minutes =
-    Math.round(minuteAngle / 6);
-
-document.getElementById("debugAngles").innerText =
-    `Time: ${hours}:${minutes}`;
+  document.getElementById("debugAngles").innerText =
+    `hour: ${hourDeg.toFixed(1)}°, minute: ${minuteDeg.toFixed(1)}°`;
 
   // текущее время браузера
   const now = new Date();
