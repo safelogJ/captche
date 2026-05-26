@@ -49,32 +49,35 @@ body {
     position: absolute;
     left: 50%;
     bottom: 50%;
-    transform-origin: bottom center;
+    /* Точка вращения: 50% по ширине (центр) и 100% по высоте (самый низ) */
+    transform-origin: 50% 100%; 
     border-radius: 10px;
     cursor: grab;
-    /* центрирование стрелки */
-    transform: translateX(-50%);
     user-select: none;
-   -webkit-user-drag: none;
-   touch-action: none;
+    touch-action: none;
 }
 
 /* =====================================
    ЧАСОВАЯ СТРЕЛКА
 ===================================== */
 .hour {
-    width: 11px;
-    height: 153px;
-    background: #3b3b3b;
+    width: 10px;
+    height: 110px;
+    /* Сдвигаем стрелку влево ровно на половину её ширины, 
+       чтобы её центр совпал с центром часов */
+    transform: translateX(-50%); 
+    background: #ff4444;
 }
 
 /* =====================================
    МИНУТНАЯ СТРЕЛКА
 ===================================== */
 .minute {
-    width: 11px;
-    height: 153px;
-    background: #444;
+    width: 6px;
+    height: 130px;
+    /* Сдвигаем влево на половину её ширины */
+    transform: translateX(-50%); 
+    background: #ffffff;
 }
 
 /* =====================================
