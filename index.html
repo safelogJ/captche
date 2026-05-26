@@ -135,16 +135,30 @@ button:hover {
 <body>
 
 <div class="container">
+
+    <!-- ЦИФЕРБЛАТ -->
     <div class="clock" id="clock">
         <div class="hand hour" id="hourHand"></div>
         <div class="hand minute" id="minuteHand"></div>
         <div class="center-dot"></div>
+       <div class="center-dot-black"></div>
     </div>
 
-    <div class="info" id="currentTime">GMT+3 00:00:00</div>
-    <div class="info" id="debugAngles">12 : 00</div>
+    <!-- ВРЕМЯ -->
+    <div class="info" id="currentTime">
+        GMT+3 00:00:00
+    </div>
 
-    <button onclick="checkTime()">Check</button>
+    <!-- КООРДИНАТЫ -->
+    <div class="info" id="debugAngles">
+        hour: 0° | minute: 0°
+    </div>
+
+    <!-- КНОПКА -->
+    <button onclick="checkTime()">
+        Check
+    </button>
+
 </div>
 
 <script>
