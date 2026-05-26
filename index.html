@@ -274,40 +274,48 @@ requestAnimationFrame(animate);
 render();
 
 
-function updateDebug() {
+   function getRotation(el) {
+  const style = window.getComputedStyle(el);
+  const matrix = new DOMMatrixReadOnly(style.transform);
 
-    let displayHours =
-        Math.round(hourAngle / 30);
+  const angle = Math.round(
+    Math.atan2(matrix.b, matrix.a) * (180 / Math.PI)
+  );
 
-    let displayMinutes =
-        Math.floor(minuteAngle / 6);
+  return (angle + 360) % 360;
+}
 
-    if (displayHours === 0)
-        displayHours = 12;
+   function updateDebug() {
+  const hourDeg = Math.round(getRotation(hourHand) / 30);
+  const minuteDeg = Math.floor(getRotation(minuteHand) / 6);
 
-    if (displayHours < 10)
-        displayHours = "0" + displayHours;
+  // показываем углы
+let displayHours = hourDeg;
 
-    if (displayMinutes < 10)
-        displayMinutes = "0" + displayMinutes;
+if (displayHours === 0)
+    displayHours = 12;
+if (displayHours < 10)
+    displayHours = "0" + displayHours;
 
-    document.getElementById("debugAngles").innerText =
-        `${displayHours} : ${displayMinutes}`;
+let displayMinutes = minuteDeg;
 
-    // GMT+3
-    const now = new Date();
+if (displayMinutes < 10)
+    displayMinutes = "0" + displayMinutes;
 
-    const utc =
-        now.getTime() +
-        now.getTimezoneOffset() * 60000;
+document.getElementById("debugAngles").innerText =
+  `${displayHours} : ${displayMinutes}`;
 
-    const gmt3 =
-        new Date(utc + 3 * 3600000);
+  // текущее время браузера
+  const now = new Date();
 
-    document.getElementById("currentTime").innerText =
-        gmt3.toTimeString().split(" ")[0];
+  // пример GMT+3 (ручной сдвиг)
+  const utc = now.getTime() + now.getTimezoneOffset() * 60000;
+  const gmt3 = new Date(utc + 3 * 3600000);
 
-    requestAnimationFrame(updateDebug);
+  document.getElementById("currentTime").innerText =
+    gmt3.toTimeString().split(" ")[0];
+
+  requestAnimationFrame(updateDebug);
 }
 
 updateDebug();
