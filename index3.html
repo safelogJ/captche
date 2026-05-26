@@ -360,6 +360,8 @@ minuteHand.addEventListener("pointerdown", () => {
 
 document.addEventListener("pointerup", () => { activeHand = null; });
 document.addEventListener("pointermove", onMove);
+document.addEventListener("pointercancel", () => { activeHand = null; });
+window.addEventListener("blur", () => { activeHand = null; });
 
 /* =========================
    ЕДИНЫЙ ИГРОВОЙ ЦИКЛ (ОПТИМИЗИРОВАНО)
