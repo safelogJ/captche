@@ -184,6 +184,7 @@ noiseAudio.volume = 0.4;
 jazzAudio.volume = 0;
 
 let audioStarted = false;
+let jazzLocked = false;
 
 /* =========================
    STATE
@@ -313,8 +314,13 @@ const hoursMatch =
 const minutesMatch =
     realMinutes === displayMinutes;
 
+    if (activeHand) {
+    jazzLocked = false;
+}
+
 // если совпали — jazz
 if (hoursMatch && minutesMatch) {
+    jazzLocked = true;
 
     // плавное переключение
     noiseAudio.volume =
@@ -323,7 +329,7 @@ if (hoursMatch && minutesMatch) {
     jazzAudio.volume =
         Math.min(0.4, jazzAudio.volume + 0.02);
 }
-else {
+else if (!jazzLocked) {
 
     // иначе шум
     jazzAudio.volume =
