@@ -173,17 +173,17 @@ hourHand.ondragstart = () => false;
 minuteHand.ondragstart = () => false;
 
 const noiseAudio = new Audio("noise.mp3");
-     noiseAudio.play();
 const jazzAudio = new Audio("jazz.mp3");
 const scratchAudio = new Audio("scretch.mp3");
 
 noiseAudio.loop = true;
 jazzAudio.loop = true;
 
-noiseAudio.volume = 0.4;
-jazzAudio.volume = 0.4;
 scratchAudio.volume = 0.8;
-let noiseStarted = false;
+noiseAudio.volume = 0.4;
+jazzAudio.volume = 0;
+
+let audioStarted = false;
 
 /* =========================
    STATE
@@ -230,19 +230,13 @@ function onMove(e) {
    POINTER EVENTS
 ========================= */
 hourHand.addEventListener("pointerdown", () => {
-        if (!noiseStarted) {
-        noiseStarted = true;
-        noiseAudio.play();
-    }
+    startAudio();
     scratchAudio.currentTime = 0;
     scratchAudio.play();
     activeHand = "hour";
 });
 minuteHand.addEventListener("pointerdown", () => {
-        if (!noiseStarted) {
-        noiseStarted = true;
-        noiseAudio.play();
-    }
+    startAudio();
     scratchAudio.currentTime = 0;
     scratchAudio.play();
     activeHand = "minute";
@@ -254,6 +248,14 @@ document.addEventListener("pointermove", onMove);
 /* =========================
    ЕДИНЫЙ ИГРОВОЙ ЦИКЛ (ОПТИМИЗИРОВАНО)
 ========================= */
+function startAudio() {
+    if (audioStarted)
+        return;
+    audioStarted = true;
+    noiseAudio.play();
+    jazzAudio.play();
+}
+    
 let last = performance.now();
 const speed = 0.03;
 
@@ -289,6 +291,48 @@ function animate(now) {
     const utc = date.getTime() + date.getTimezoneOffset() * 60000;
     const gmt3 = new Date(utc + 3 * 3600000);
     currentTimeEl.innerText = gmt3.toTimeString().split(" ")[0];
+    
+/* =========================
+   AUDIO LOGIC
+========================= */
+
+// текущее реальное время
+let realHours = date.getHours();
+let realMinutes = date.getMinutes();
+
+// переводим 24h -> 12h
+realHours = realHours % 12;
+
+if (realHours === 0)
+    realHours = 12;
+
+// совпадают ли стрелки со временем
+const hoursMatch =
+    realHours === displayHours;
+
+const minutesMatch =
+    realMinutes === displayMinutes;
+
+// если совпали — jazz
+if (hoursMatch && minutesMatch) {
+
+    // плавное переключение
+    noiseAudio.volume =
+        Math.max(0, noiseAudio.volume - 0.02);
+
+    jazzAudio.volume =
+        Math.min(0.4, jazzAudio.volume + 0.02);
+}
+else {
+
+    // иначе шум
+    jazzAudio.volume =
+        Math.max(0, jazzAudio.volume - 0.02);
+
+    noiseAudio.volume =
+        Math.min(0.4, noiseAudio.volume + 0.02);
+}
+    
 
     // Запрашиваем следующий кадр один раз для ВСЕГО
     requestAnimationFrame(animate);
