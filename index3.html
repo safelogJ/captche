@@ -185,7 +185,6 @@ jazzAudio.volume = 0;
 
 let audioStarted = false;
 let jazzLocked = false;
-let justLoaded = true;
 
 /* =========================
    STATE
@@ -298,11 +297,6 @@ function animate(now) {
 /* =========================
    AUDIO LOGIC
 ========================= */
-
-    if (justLoaded) {
-    justLoaded = false;
-    return;
-    }
 
     // текущее реальное время
     let realHours = date.getHours();
