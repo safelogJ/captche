@@ -182,53 +182,6 @@ jazzAudio.loop = true;
 noiseAudio.volume = 0.4;
 jazzAudio.volume = 0.4;
 scratchAudio.volume = 0.8;
-    
-let audioUnlocked = false;
-    
-function unlockAudio() {
-    if (audioUnlocked)
-        return;
-    audioUnlocked = true;
-    noiseAudio.play().then(() => {
-        noiseAudio.pause();
-        noiseAudio.currentTime = 0;
-    });
-
-    jazzAudio.play().then(() => {
-        jazzAudio.pause();
-        jazzAudio.currentTime = 0;
-    });
-}
-
-    // музыка
-
-    function isCorrectAngle() {
-    let diff =
-        Math.abs(hourAngle - minuteAngle);
-    // нормализация
-    if (diff > 180)
-        diff = 360 - diff;
-    // например правильный угол:
-    return diff < 15;
-}
-    
-let currentMode = "";
-function updateAudio() {
-    const correct = isCorrectAngle();
-    // ПРАВИЛЬНО
-    if (correct && currentMode !== "jazz") {
-        currentMode = "jazz";
-        noiseAudio.pause();
-        jazzAudio.play();
-    }
-
-    // НЕПРАВИЛЬНО
-    else if (!correct && currentMode !== "noise") {
-        currentMode = "noise";
-        jazzAudio.pause();
-        noiseAudio.play();
-    }
-}
 
 /* =========================
    STATE
@@ -276,13 +229,11 @@ function onMove(e) {
 ========================= */
 hourHand.addEventListener("pointerdown", () => {
     scratchAudio.currentTime = 0;
-     unlockAudio();
     scratchAudio.play();
     activeHand = "hour";
 });
 minuteHand.addEventListener("pointerdown", () => {
     scratchAudio.currentTime = 0;
-     unlockAudio();
     scratchAudio.play();
     activeHand = "minute";
 });
@@ -311,7 +262,6 @@ function animate(now) {
 
     // 2. Отрисовываем стрелки на экране
     render();
-    updateAudio();
 
     // 3. Обновляем текст с положением стрелок (перенесено сюда)
     let displayHours = Math.round(hourAngle / 30);
@@ -332,8 +282,7 @@ function animate(now) {
 
     // Запрашиваем следующий кадр один раз для ВСЕГО
     requestAnimationFrame(animate);
-} 
-
+}
 // Поехали!
 requestAnimationFrame(animate);
 </script>
