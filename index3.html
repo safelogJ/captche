@@ -184,6 +184,17 @@ jazzAudio.volume = 0.4;
 scratchAudio.volume = 0.8;
 
     // музыка
+
+    function isCorrectAngle() {
+    let diff =
+        Math.abs(hourAngle - minuteAngle);
+    // нормализация
+    if (diff > 180)
+        diff = 360 - diff;
+    // например правильный угол:
+    return diff < 15;
+}
+    
 let currentMode = "";
 function updateAudio() {
     const correct = isCorrectAngle();
