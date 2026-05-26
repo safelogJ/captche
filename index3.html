@@ -308,12 +308,8 @@ if (realHours === 0)
     realHours = 12;
 
 // совпадают ли стрелки со временем
-const hoursMatch =
-    realHours === displayHours;
-
-const minutesMatch =
-    realMinutes === displayMinutes;
-
+const hoursMatch = realHours === displayHours;
+const minutesMatch = realMinutes === displayMinutes;
     if (activeHand) {
     jazzLocked = false;
 }
@@ -321,21 +317,12 @@ const minutesMatch =
 // если совпали — jazz
 if (hoursMatch && minutesMatch) {
     jazzLocked = true;
-    // плавное переключение
     noiseAudio.volume = Math.max(0, noiseAudio.volume - 0.02);
     jazzAudio.volume = Math.min(0.4, jazzAudio.volume + 0.02);
-} else {
-    if (!jazzLocked) {
-      // иначе шум
-        jazzAudio.volume = Math.max(0, jazzAudio.volume - 0.02);
-        noiseAudio.volume = Math.min(0.4, noiseAudio.volume + 0.02); 
-    } else {
-        noiseAudio.volume = Math.max(0, noiseAudio.volume - 0.02);
-        jazzAudio.volume = Math.min(0.4, jazzAudio.volume + 0.02);
-    }
-}
-    
-
+} else if (!jazzLocked) {
+    jazzAudio.volume = Math.max(0, jazzAudio.volume - 0.02);
+    noiseAudio.volume = Math.min(0.4, noiseAudio.volume + 0.02);
+}  
     // Запрашиваем следующий кадр один раз для ВСЕГО
     requestAnimationFrame(animate);
 }
