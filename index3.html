@@ -182,6 +182,23 @@ jazzAudio.loop = true;
 noiseAudio.volume = 0.4;
 jazzAudio.volume = 0.4;
 scratchAudio.volume = 0.8;
+    
+let audioUnlocked = false;
+    
+function unlockAudio() {
+    if (audioUnlocked)
+        return;
+    audioUnlocked = true;
+    noiseAudio.play().then(() => {
+        noiseAudio.pause();
+        noiseAudio.currentTime = 0;
+    });
+
+    jazzAudio.play().then(() => {
+        jazzAudio.pause();
+        jazzAudio.currentTime = 0;
+    });
+}
 
     // музыка
 
@@ -259,11 +276,13 @@ function onMove(e) {
 ========================= */
 hourHand.addEventListener("pointerdown", () => {
     scratchAudio.currentTime = 0;
+     unlockAudio();
     scratchAudio.play();
     activeHand = "hour";
 });
 minuteHand.addEventListener("pointerdown", () => {
     scratchAudio.currentTime = 0;
+     unlockAudio();
     scratchAudio.play();
     activeHand = "minute";
 });
