@@ -183,6 +183,25 @@ noiseAudio.volume = 0.4;
 jazzAudio.volume = 0.4;
 scratchAudio.volume = 0.8;
 
+    // музыка
+let currentMode = "";
+function updateAudio() {
+    const correct = isCorrectAngle();
+    // ПРАВИЛЬНО
+    if (correct && currentMode !== "jazz") {
+        currentMode = "jazz";
+        noiseAudio.pause();
+        jazzAudio.play();
+    }
+
+    // НЕПРАВИЛЬНО
+    else if (!correct && currentMode !== "noise") {
+        currentMode = "noise";
+        jazzAudio.pause();
+        noiseAudio.play();
+    }
+}
+
 /* =========================
    STATE
 ========================= */
@@ -284,25 +303,6 @@ function animate(now) {
     // Запрашиваем следующий кадр один раз для ВСЕГО
     requestAnimationFrame(animate);
 } 
-
-// музыка
-let currentMode = "";
-function updateAudio() {
-    const correct = isCorrectAngle();
-    // ПРАВИЛЬНО
-    if (correct && currentMode !== "jazz") {
-        currentMode = "jazz";
-        noiseAudio.pause();
-        jazzAudio.play();
-    }
-
-    // НЕПРАВИЛЬНО
-    else if (!correct && currentMode !== "noise") {
-        currentMode = "noise";
-        jazzAudio.pause();
-        noiseAudio.play();
-    }
-}
 
 // Поехали!
 requestAnimationFrame(animate);
