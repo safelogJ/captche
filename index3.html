@@ -226,6 +226,13 @@ function onMove(e) {
         minuteAngle = angle;
     }
 }
+function startAudio() {
+    if (audioStarted)
+        return;
+    audioStarted = true;
+    noiseAudio.play();
+    jazzAudio.play();
+}
 
 /* =========================
    POINTER EVENTS
@@ -249,13 +256,6 @@ document.addEventListener("pointermove", onMove);
 /* =========================
    ЕДИНЫЙ ИГРОВОЙ ЦИКЛ (ОПТИМИЗИРОВАНО)
 ========================= */
-function startAudio() {
-    if (audioStarted)
-        return;
-    audioStarted = true;
-    noiseAudio.play();
-    jazzAudio.play();
-}
     
 let last = performance.now();
 const speed = 0.03;
