@@ -320,8 +320,7 @@ function animate(now) {
     } else if (!jazzLocked) {
         jazzAudio.volume = Math.max(0, jazzAudio.volume - 0.02);
         noiseAudio.volume = Math.min(0.4, noiseAudio.volume + 0.02);
-    }  
-   
+    }   
     // Запрашиваем следующий кадр один раз для ВСЕГО
     requestAnimationFrame(animate);
 }
