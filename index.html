@@ -5,93 +5,132 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Clock Captcha</title>
     <style>
-        body {
-            margin: 0;
-            height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            background: #444fff;
-            font-family: Arial, sans-serif;
-        }
 
-        .container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 15px;
-        }
+/* =====================================
+   СТРАНИЦА
+===================================== */
+body {
+    margin: 0;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: #444fff;
+    font-family: Arial, sans-serif;
+}
 
-        .clock {
-            width: 300px;
-            height: 300px;
-            border-radius: 50%;
-            border: 5px solid #444;
-            background: #1a1a1a;
-            position: relative;
-        }
+/* =====================================
+   ОСНОВНОЙ КОНТЕЙНЕР
+===================================== */
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+}
 
-        .hand {
-            position: absolute;
-            left: 50%;
-            bottom: 50%;
-            /* transform-origin задан как bottom center. 
-               Чтобы не ломать ось вращения через translateX(-50%), 
-               смещаем стрелку влево с помощью margin-left на половину её ширины */
-            transform-origin: bottom center;
-            border-radius: 10px;
-            cursor: grab;
-            user-select: none;
-            touch-action: none;
-        }
+/* =====================================
+   ЦИФЕРБЛАТ
+===================================== */
+.clock {
 
-        .hour {
-            width: 10px;
-            height: 110px;
-            margin-left: -5px; /* Центрирование */
-            background: #ff4444; /* Сделаем визуальное отличие */
-        }
+    width: 301px;
+    height: 301px;
+    border-radius: 50%;
+    border: 5px solid #444;
+    background: #1a1a1a;
+    position: relative;
+}
 
-        .minute {
-            width: 6px;
-            height: 130px;
-            margin-left: -3px; /* Центрирование */
-            background: #ffffff;
-        }
+/* =====================================
+   ОБЩИЙ СТИЛЬ СТРЕЛОК
+===================================== */
+.hand {
+    position: absolute;
+    left: 50%;
+    bottom: 50%;
+    transform-origin: bottom center;
+    border-radius: 10px;
+    cursor: grab;
+    /* центрирование стрелки */
+    transform: translateX(-50%);
+    user-select: none;
+   -webkit-user-drag: none;
+   touch-action: none;
+}
 
-        .center-dot {
-            width: 20px;
-            height: 20px;
-            border-radius: 50%;
-            background: #444;
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            z-index: 10;
-        }
+/* =====================================
+   ЧАСОВАЯ СТРЕЛКА
+===================================== */
+.hour {
+    width: 11px;
+    height: 153px;
+    background: #3b3b3b;
+}
 
-        .info {
-            color: white;
-            font-size: 20px;
-            min-width: 250px;
-            text-align: center;
-        }
+/* =====================================
+   МИНУТНАЯ СТРЕЛКА
+===================================== */
+.minute {
+    width: 11px;
+    height: 153px;
+    background: #444;
+}
 
-        button {
-            padding: 12px 24px;
-            border: none;
-            background: #333;
-            color: white;
-            cursor: pointer;
-            border-radius: 8px;
-            font-size: 16px;
-        }
+/* =====================================
+   ЦЕНТР ЧАСОВ
+===================================== */
+.center-dot {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    background: red;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
 
-        button:hover {
-            background: #555;
-        }
-    </style>
+   .center-dot-black {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: black;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+/* =====================================
+   ТЕКСТОВЫЕ БЛОКИ
+===================================== */
+.info {
+    color: black;
+    font-size: 20px;
+    min-width: 250px;
+    text-align: center;
+}
+
+/* =====================================
+   КНОПКА
+===================================== */
+button {
+
+    padding: 12px 24px;
+    border: none;
+    background: #333;
+    color: white;
+    cursor: pointer;
+    border-radius: 8px;
+    font-size: 16px;
+}
+
+button:hover {
+    background: #555;
+}
+
+</style>
 </head>
 <body>
 
