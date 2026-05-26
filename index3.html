@@ -321,22 +321,18 @@ const minutesMatch =
 // если совпали — jazz
 if (hoursMatch && minutesMatch) {
     jazzLocked = true;
-
     // плавное переключение
-    noiseAudio.volume =
-        Math.max(0, noiseAudio.volume - 0.02);
-
-    jazzAudio.volume =
-        Math.min(0.4, jazzAudio.volume + 0.02);
-}
-else if (!jazzLocked) {
-
-    // иначе шум
-    jazzAudio.volume =
-        Math.max(0, jazzAudio.volume - 0.02);
-
-    noiseAudio.volume =
-        Math.min(0.4, noiseAudio.volume + 0.02);
+    noiseAudio.volume = Math.max(0, noiseAudio.volume - 0.02);
+    jazzAudio.volume = Math.min(0.4, jazzAudio.volume + 0.02);
+} else {
+    if (!jazzLocked) {
+      // иначе шум
+        jazzAudio.volume = Math.max(0, jazzAudio.volume - 0.02);
+        noiseAudio.volume = Math.min(0.4, noiseAudio.volume + 0.02); 
+    } else {
+        noiseAudio.volume = Math.max(0, noiseAudio.volume - 0.02);
+        jazzAudio.volume = Math.min(0.4, jazzAudio.volume + 0.02);
+    }
 }
     
 
