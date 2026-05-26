@@ -164,53 +164,59 @@ button:hover {
 </div>
 
 <script>
-/* =========================
-   ПОЛУЧАЕМ ЭЛЕМЕНТЫ
-   ========================= */
 const hourHand = document.getElementById("hourHand");
 const minuteHand = document.getElementById("minuteHand");
 const clock = document.getElementById("clock");
+
 hourHand.ondragstart = () => false;
 minuteHand.ondragstart = () => false;
 
-/* какая стрелка сейчас двигается */
+/* =========================
+   STATE
+========================= */
+let hourAngle = 270;
+let minuteAngle = 90;
+
 let activeHand = null;
 
 /* =========================
-   ВЫЧИСЛЕНИЕ УГЛА МЫШИ
-   ========================= */
+   RENDER
+========================= */
+function render() {
+    hourHand.style.transform =
+        `translateX(-50%) rotate(${hourAngle}deg)`;
+
+    minuteHand.style.transform =
+        `translateX(-50%) rotate(${minuteAngle}deg)`;
+}
+
+/* =========================
+   ANGLE FROM MOUSE
+========================= */
 function getAngle(e) {
-  const rect = clock.getBoundingClientRect();
+    const rect = clock.getBoundingClientRect();
 
-  /* координаты курсора относительно центра часов */
-  const x = e.clientX - rect.left - rect.width / 2;
-  const y = e.clientY - rect.top - rect.height / 2;
+    const x = e.clientX - rect.left - rect.width / 2;
+    const y = e.clientY - rect.top - rect.height / 2;
 
-  /* перевод в угол (в градусах) */
-  return Math.atan2(y, x) * 180 / Math.PI + 90;
+    return Math.atan2(y, x) * 180 / Math.PI + 90;
 }
 
 /* =========================
-   ПРИМЕНЕНИЕ ПОВОРОТА
-   ========================= */
-function setRotation(el, angle) {
-    el.style.transform = `translateX(-50%) rotate(${angle}deg)`;
-}
-
-/* =========================
-   ДВИЖЕНИЕ МЫШИ / ТАЧА
-   ========================= */
+   DRAG CONTROL
+========================= */
 function onMove(e) {
-  if (!activeHand) return;
+    if (!activeHand) return;
 
-  const angle = getAngle(e);
+    const angle = getAngle(e);
 
-  /* выбор стрелки */
-  if (activeHand === "hour") {
-    setRotation(hourHand, angle);
-  } else if (activeHand === "minute") {
-    setRotation(minuteHand, angle);
-  }
+    if (activeHand === "hour") {
+        hourAngle = angle;
+    } else if (activeHand === "minute") {
+        minuteAngle = angle;
+    }
+
+    render();
 }
 
 /* =========================
@@ -219,76 +225,94 @@ function onMove(e) {
 hourHand.addEventListener("pointerdown", () => {
     activeHand = "hour";
 });
+
 minuteHand.addEventListener("pointerdown", () => {
     activeHand = "minute";
 });
+
 document.addEventListener("pointerup", () => {
     activeHand = null;
 });
+
 document.addEventListener("pointermove", onMove);
 
 /* =========================
-   ПОЛУЧЕНИЕ ТЕКУЩЕГО УГЛА СТРЕЛКИ
-   ========================= */
-function getRotation(el) {
-  const style = window.getComputedStyle(el);
-  const matrix = new DOMMatrixReadOnly(style.transform);
+   ANIMATION LOOP (ВАЖНОЕ ИЗМЕНЕНИЕ)
+========================= */
 
-  const angle = Math.round(
-    Math.atan2(matrix.b, matrix.a) * (180 / Math.PI)
-  );
+let last = performance.now();
+const speed = 0.03;
 
-  return (angle + 360) % 360;
+function animate(now) {
+    const delta = now - last;
+    last = now;
+
+    const step = delta * speed;
+
+    // ВСЕГДА крутим обе стрелки
+    // но если стрелку тащат — её не обновляем
+
+    if (activeHand !== "hour") {
+        hourAngle += step;
+        hourAngle %= 360;
+    }
+
+    if (activeHand !== "minute") {
+        minuteAngle += step;
+        minuteAngle %= 360;
+    }
+
+    render();
+    requestAnimationFrame(animate);
 }
+
+requestAnimationFrame(animate);
 
 /* =========================
-   ПРОВЕРКА ВРЕМЕНИ
-   ========================= */
-function checkTime() {
-    let hours = Math.round(getRotation(hourHand) / 30);
-    if (hours === 0)
-        hours = 12;
-    let minutes = Math.floor(getRotation(minuteHand) / 6);
-    if (minutes < 10)
-        minutes = "0" + minutes;
-    alert(`Time: ${hours}:${minutes}`);
-}
+   INIT
+========================= */
+render();
 
-  function updateDebug() {
-  const hourDeg = Math.round(getRotation(hourHand) / 30);
-  const minuteDeg = Math.floor(getRotation(minuteHand) / 6);
 
-  // показываем углы
-let displayHours = hourDeg;
+function updateDebug() {
 
-if (displayHours === 0)
-    displayHours = 12;
-if (displayHours < 10)
-    displayHours = "0" + displayHours;
+    let displayHours =
+        Math.round(hourAngle / 30);
 
-let displayMinutes = minuteDeg;
+    let displayMinutes =
+        Math.floor(minuteAngle / 6);
 
-if (displayMinutes < 10)
-    displayMinutes = "0" + displayMinutes;
+    if (displayHours === 0)
+        displayHours = 12;
 
-document.getElementById("debugAngles").innerText =
-  `${displayHours} : ${displayMinutes}`;
+    if (displayHours < 10)
+        displayHours = "0" + displayHours;
 
-  // текущее время браузера
-  const now = new Date();
+    if (displayMinutes < 10)
+        displayMinutes = "0" + displayMinutes;
 
-  // пример GMT+3 (ручной сдвиг)
-  const utc = now.getTime() + now.getTimezoneOffset() * 60000;
-  const gmt3 = new Date(utc + 3 * 3600000);
+    document.getElementById("debugAngles").innerText =
+        `${displayHours} : ${displayMinutes}`;
 
-  document.getElementById("currentTime").innerText =
-    gmt3.toTimeString().split(" ")[0];
+    // GMT+3
+    const now = new Date();
 
-  requestAnimationFrame(updateDebug);
+    const utc =
+        now.getTime() +
+        now.getTimezoneOffset() * 60000;
+
+    const gmt3 =
+        new Date(utc + 3 * 3600000);
+
+    document.getElementById("currentTime").innerText =
+        gmt3.toTimeString().split(" ")[0];
+
+    requestAnimationFrame(updateDebug);
 }
 
 updateDebug();
 </script>
+
 
 </body>
 </html>
