@@ -185,7 +185,6 @@ jazzAudio.volume = 0;
 
 let audioStarted = false;
 let jazzLocked = false;
-let justLoaded = true;
 
 /* =========================
    STATE
@@ -298,33 +297,30 @@ function animate(now) {
 /* =========================
    AUDIO LOGIC
 ========================= */
-    if (justLoaded) {
-    justLoaded = false;
-    } else {
-        // текущее реальное время
-        let realHours = date.getHours();
-        let realMinutes = date.getMinutes();
-        // переводим 24h -> 12h
-        realHours = realHours % 12;
-        if (realHours === 0) {
-            realHours = 12;
-        }
-        // совпадают ли стрелки со временем
-        const hoursMatch = realHours === displayHours;
-        const minutesMatch = realMinutes === displayMinutes;
-        if (activeHand) {
-        jazzLocked = false;
-        }
-        // если совпали — jazz
-        if (hoursMatch && minutesMatch) {
-            jazzLocked = true;
-            noiseAudio.volume = Math.max(0, noiseAudio.volume - 0.02);
-            jazzAudio.volume = Math.min(0.4, jazzAudio.volume + 0.02);
-        } else if (!jazzLocked) {
-            jazzAudio.volume = Math.max(0, jazzAudio.volume - 0.02);
-            noiseAudio.volume = Math.min(0.4, noiseAudio.volume + 0.02);
-        }
+
+    // текущее реальное время
+    let realHours = date.getHours();
+    let realMinutes = date.getMinutes();
+    // переводим 24h -> 12h
+    realHours = realHours % 12;
+    if (realHours === 0) {
+        realHours = 12;
     }
+    // совпадают ли стрелки со временем
+    const hoursMatch = realHours === displayHours;
+    const minutesMatch = realMinutes === displayMinutes;
+    if (activeHand) {
+    jazzLocked = false;
+    }
+    // если совпали — jazz
+    if (hoursMatch && minutesMatch) {
+        jazzLocked = true;
+        noiseAudio.volume = Math.max(0, noiseAudio.volume - 0.02);
+        jazzAudio.volume = Math.min(0.4, jazzAudio.volume + 0.02);
+    } else if (!jazzLocked) {
+        jazzAudio.volume = Math.max(0, jazzAudio.volume - 0.02);
+        noiseAudio.volume = Math.min(0.4, noiseAudio.volume + 0.02);
+    }    
     // Запрашиваем следующий кадр один раз для ВСЕГО
     requestAnimationFrame(animate);
 }
