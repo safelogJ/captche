@@ -178,7 +178,6 @@ const scratchAudio = new Audio("scretch.mp3");
 
 noiseAudio.loop = true;
 jazzAudio.loop = true;
-scratchAudio.loop = true;
 
 scratchAudio.volume = 0.8;
 noiseAudio.volume = 0.4;
@@ -240,14 +239,14 @@ function startAudio() {
 ========================= */
 hourHand.addEventListener("pointerdown", () => {
     startAudio();
-  //  scratchAudio.currentTime = 0;
-  //  scratchAudio.play();
+    scratchAudio.currentTime = 0;
+    scratchAudio.play();
     activeHand = "hour";
 });
 minuteHand.addEventListener("pointerdown", () => {
     startAudio();
-  //  scratchAudio.currentTime = 0;
-  //  scratchAudio.play();
+    scratchAudio.currentTime = 0;
+    scratchAudio.play();
     activeHand = "minute";
 });
 
@@ -322,18 +321,7 @@ function animate(now) {
         jazzAudio.volume = Math.max(0, jazzAudio.volume - 0.02);
         noiseAudio.volume = Math.min(0.4, noiseAudio.volume + 0.02);
     }  
-
-    if (activeHand) {
-        if (scratchAudio.paused) {
-            scratchAudio.play();
-        }
-    } else {
-        if (!scratchAudio.paused) {
-            scratchAudio.pause();
-            scratchAudio.currentTime = 0;
-        }
-    }
-    
+   
     // Запрашиваем следующий кадр один раз для ВСЕГО
     requestAnimationFrame(animate);
 }
