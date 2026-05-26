@@ -262,6 +262,7 @@ function animate(now) {
 
     // 2. Отрисовываем стрелки на экране
     render();
+    updateAudio();
 
     // 3. Обновляем текст с положением стрелок (перенесено сюда)
     let displayHours = Math.round(hourAngle / 30);
@@ -282,6 +283,25 @@ function animate(now) {
 
     // Запрашиваем следующий кадр один раз для ВСЕГО
     requestAnimationFrame(animate);
+}
+    // музыка
+
+    let currentMode = "";
+function updateAudio() {
+    const correct = isCorrectAngle();
+    // ПРАВИЛЬНО
+    if (correct && currentMode !== "jazz") {
+        currentMode = "jazz";
+        noiseAudio.pause();
+        jazzAudio.play();
+    }
+
+    // НЕПРАВИЛЬНО
+    else if (!correct && currentMode !== "noise") {
+        currentMode = "noise";
+        jazzAudio.pause();
+        noiseAudio.play();
+    }
 }
 
 // Поехали!
