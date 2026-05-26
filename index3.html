@@ -185,6 +185,7 @@ jazzAudio.volume = 0;
 
 let audioStarted = false;
 let jazzLocked = false;
+let justLoaded = true;
 
 /* =========================
    STATE
@@ -261,6 +262,10 @@ let last = performance.now();
 const speed = 0.03;
 
 function animate(now) {
+    if (justLoaded) {
+    justLoaded = false;
+    return;
+}
     const delta = now - last;
     last = now;
     const step = delta * speed;
