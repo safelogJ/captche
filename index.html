@@ -140,17 +140,42 @@ body {
 ===================================== */
 
 button {
-    padding: 12px 24px;
+    width: 70px;
+    height: 70px;
+
     border: none;
-    background: #333;
-    color: white;
+    border-radius: 12px;
+
+    background: #222;
+
     cursor: pointer;
-    border-radius: 8px;
-    font-size: 16px;
+
+    display: none;
+
+    position: relative;
+
+    padding: 0;
+}
+
+button::before {
+
+    content: "";
+
+    width: 28px;
+    height: 28px;
+
+    background: red;
+
+    position: absolute;
+
+    top: 50%;
+    left: 50%;
+
+    transform: translate(-50%, -50%);
 }
 
 button:hover {
-    background: #555;
+    background: #333;
 }
 
 /* =====================================
@@ -185,7 +210,7 @@ button:hover {
         <!-- КООРДИНАТЫ -->
         <div class="info" id="debugAngles">00:00</div>
         <!-- КНОПКА -->
-        <button onclick="sendCaptcha()">Check</button>
+        <button id="checkButton" onclick="sendCaptcha()">Check</button>
     </div>
 </div>
 
@@ -195,6 +220,7 @@ const minuteHand = document.getElementById("minuteHand");
 const clock = document.getElementById("clock");
 const debugAngles = document.getElementById("debugAngles");
 const currentTimeEl = document.getElementById("currentTime");
+const checkButton = document.getElementById("checkButton");
 
 hourHand.ondragstart = () => false;
 minuteHand.ondragstart = () => false;
@@ -348,11 +374,13 @@ function animate(now) {
     // если совпали — jazz
     if (hoursMatch && minutesMatch) {
         jazzLocked = true;
-        noiseAudio.volume = Math.max(0, noiseAudio.volume - 0.02);
-        jazzAudio.volume = Math.min(0.4, jazzAudio.volume + 0.02);
+        noiseAudio.volume = 0;
+        jazzAudio.volume = 0.4;
+        checkButton.style.display = "block";
     } else if (!jazzLocked) {
-        jazzAudio.volume = Math.max(0, jazzAudio.volume - 0.02);
-        noiseAudio.volume = Math.min(0.4, noiseAudio.volume + 0.02);
+        jazzAudio.volume = 0;
+        noiseAudio.volume = 0.4;
+        checkButton.style.display = "none";
     }   
     // Запрашиваем следующий кадр один раз для ВСЕГО
     requestAnimationFrame(animate);
