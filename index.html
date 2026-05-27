@@ -144,32 +144,35 @@ button {
     height: 60px;
     border: none;
     border-radius: 50%;
-    background: #222;
+    background: #444;
     cursor: pointer;
     display: none;
     padding: 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    transition:
-        transform 0.08s ease,
-        background 0.15s ease;
+    position: relative;
+    transition: background 0.15s ease;
 }
+
+/* внутренняя кнопка */
 
 button::before {
     content: "";
-    width: 28px;
-    height: 28px;
-    background: red;
+    position: absolute;
+    inset: 5px;
+    border-radius: 50%;
+    background: #111;
+    transition: transform 0.08s ease;
 }
 
-button:hover {
-    background: #333;
+/* hover */
+
+button:hover::before {
+    background: #1a1a1a;
 }
 
 /* нажатие */
-button:active {
-    transform: scale(0.92);
+
+button:active::before {
+    transform: scale(0.9);
 }
 
 /* =====================================
