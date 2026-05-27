@@ -185,7 +185,7 @@ button:hover {
         <!-- КООРДИНАТЫ -->
         <div class="info" id="debugAngles">00:00</div>
         <!-- КНОПКА -->
-        <button onclick="checkTime()">Check</button>
+        <button onclick="sendCaptcha()">Check</button>
     </div>
 </div>
 
@@ -219,6 +219,15 @@ let jazzLocked = false;
 let hourAngle = 270;
 let minuteAngle = 90;
 let activeHand = null;
+
+function sendCaptcha() {
+    Telegram.WebApp.sendData(JSON.stringify({
+        solved: jazzLocked,
+        hourAngle: hourAngle,
+        minuteAngle: minuteAngle,
+        displayTime: debugAngles.innerText
+    }));
+}
 
 /* =========================
    RENDER
