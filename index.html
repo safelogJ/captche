@@ -4,25 +4,43 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Clock Captcha</title>
-    <style>
+
+<style>
 
 /* =====================================
    СТРАНИЦА
 ===================================== */
+
 body {
     margin: 0;
-    height: 100vh;
+    min-height: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;
     background: #444fff;
     font-family: Arial, sans-serif;
+    overflow-y: auto;
 }
 
 /* =====================================
    ОСНОВНОЙ КОНТЕЙНЕР
 ===================================== */
+
 .container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+/* =====================================
+   ПРАВАЯ ПАНЕЛЬ
+===================================== */
+
+.panel {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -32,19 +50,21 @@ body {
 /* =====================================
    ЦИФЕРБЛАТ
 ===================================== */
-.clock {
 
-    width: 301px;
-    height: 301px;
+.clock {
+    width: min(240px, 80vw);
+    height: min(240px, 80vw);
     border-radius: 50%;
-    border: 5px solid #444;
+    border: 4px solid #444;
     background: #1a1a1a;
     position: relative;
+    flex-shrink: 0;
 }
 
 /* =====================================
    ОБЩИЙ СТИЛЬ СТРЕЛОК
 ===================================== */
+
 .hand {
     position: absolute;
     left: 50%;
@@ -52,37 +72,39 @@ body {
     transform-origin: bottom center;
     border-radius: 10px;
     cursor: grab;
-    /* центрирование стрелки */
     transform: translateX(-50%);
     user-select: none;
-   -webkit-user-drag: none;
-   touch-action: none;
+    -webkit-user-drag: none;
+    touch-action: none;
 }
 
 /* =====================================
    ЧАСОВАЯ СТРЕЛКА
 ===================================== */
+
 .hour {
-    width: 11px;
-    height: 153px;
+    width: 9px;
+    height: 122px;
     background: #3b3b3b;
 }
 
 /* =====================================
    МИНУТНАЯ СТРЕЛКА
 ===================================== */
+
 .minute {
-    width: 11px;
-    height: 153px;
+    width: 9px;
+    height: 122px;
     background: #444;
 }
 
 /* =====================================
    ЦЕНТР ЧАСОВ
 ===================================== */
+
 .center-dot {
-    width: 100px;
-    height: 100px;
+    width: 80px;
+    height: 80px;
     border-radius: 50%;
     background: red;
     position: absolute;
@@ -91,9 +113,9 @@ body {
     transform: translate(-50%, -50%);
 }
 
-   .center-dot-black {
-    width: 10px;
-    height: 10px;
+.center-dot-black {
+    width: 8px;
+    height: 8px;
     border-radius: 50%;
     background: black;
     position: absolute;
@@ -105,6 +127,7 @@ body {
 /* =====================================
    ТЕКСТОВЫЕ БЛОКИ
 ===================================== */
+
 .info {
     color: black;
     font-size: 20px;
@@ -115,8 +138,8 @@ body {
 /* =====================================
    КНОПКА
 ===================================== */
-button {
 
+button {
     padding: 12px 24px;
     border: none;
     background: #333;
@@ -130,37 +153,41 @@ button:hover {
     background: #555;
 }
 
+/* =====================================
+   MOBILE
+===================================== */
+
+@media (max-width: 600px) {
+    .info {
+        font-size: 18px;
+        min-width: auto;
+    }
+    button {
+        width: 100%;
+    }
+}
+
 </style>
 </head>
 <body>
-
 <div class="container">
-
     <!-- ЦИФЕРБЛАТ -->
     <div class="clock" id="clock">
         <div class="hand hour" id="hourHand"></div>
         <div class="hand minute" id="minuteHand"></div>
         <div class="center-dot"></div>
-       <div class="center-dot-black"></div>
+        <div class="center-dot-black"></div>
     </div>
-
-    <!-- ВРЕМЯ -->
-    <div class="info" id="currentTime">
-        GMT+3 00:00:00
+    <!-- ПРАВАЯ ПАНЕЛЬ -->
+    <div class="panel">
+        <!-- ВРЕМЯ -->
+        <div class="info" id="currentTime">GMT+3 00:00:00</div>
+        <!-- КООРДИНАТЫ -->
+        <div class="info" id="debugAngles">00:00</div>
+        <!-- КНОПКА -->
+        <button onclick="sendCaptcha()">Check</button>
     </div>
-
-    <!-- КООРДИНАТЫ -->
-    <div class="info" id="debugAngles">
-        hour: 0° | minute: 0°
-    </div>
-
-    <!-- КНОПКА -->
-    <button onclick="checkTime()">
-        Check
-    </button>
-
 </div>
-
 
 <script>
 const hourHand = document.getElementById("hourHand");
@@ -193,6 +220,15 @@ let hourAngle = 270;
 let minuteAngle = 90;
 let activeHand = null;
 
+function sendCaptcha() {
+    Telegram.WebApp.sendData(JSON.stringify({
+        solved: jazzLocked,
+        hourAngle: hourAngle,
+        minuteAngle: minuteAngle,
+        displayTime: debugAngles.innerText
+    }));
+}
+
 /* =========================
    RENDER
 ========================= */
@@ -208,7 +244,6 @@ function getAngle(e) {
     const rect = clock.getBoundingClientRect();
     const x = e.clientX - rect.left - rect.width / 2;
     const y = e.clientY - rect.top - rect.height / 2;
-
     // Гарантируем, что угол всегда будет в диапазоне от 0 до 360
     return (Math.atan2(y, x) * 180 / Math.PI + 450) % 360;
 }
@@ -252,6 +287,8 @@ minuteHand.addEventListener("pointerdown", () => {
 
 document.addEventListener("pointerup", () => { activeHand = null; });
 document.addEventListener("pointermove", onMove);
+document.addEventListener("pointercancel", () => { activeHand = null; });
+window.addEventListener("blur", () => { activeHand = null; });
 
 /* =========================
    ЕДИНЫЙ ИГРОВОЙ ЦИКЛ (ОПТИМИЗИРОВАНО)
@@ -261,11 +298,9 @@ let last = performance.now();
 const speed = 0.03;
 
 function animate(now) {
-
     const delta = now - last;
     last = now;
     const step = delta * speed;
-
     // 1. Двигаем стрелки, если их не тащат
     if (activeHand !== "hour") {
         hourAngle = (hourAngle + step) % 360;
@@ -273,10 +308,8 @@ function animate(now) {
     if (activeHand !== "minute") {
         minuteAngle = (minuteAngle + step) % 360;
     }
-
     // 2. Отрисовываем стрелки на экране
     render();
-
     // 3. Обновляем текст с положением стрелок (перенесено сюда)
     let displayHours = Math.round(hourAngle / 30);
     let displayMinutes = Math.floor(minuteAngle / 6);
@@ -320,7 +353,7 @@ function animate(now) {
     } else if (!jazzLocked) {
         jazzAudio.volume = Math.max(0, jazzAudio.volume - 0.02);
         noiseAudio.volume = Math.min(0.4, noiseAudio.volume + 0.02);
-    }    
+    }   
     // Запрашиваем следующий кадр один раз для ВСЕГО
     requestAnimationFrame(animate);
 }
