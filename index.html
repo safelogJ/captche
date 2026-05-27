@@ -146,31 +146,39 @@ button {
     border-radius: 50%;
     background: #444;
     cursor: pointer;
-    display: none;
-    padding: 0;
-    position: relative;
+    
+    /* Убираем лишние отступы */
+    padding: 0; 
+    
+    /* ИДЕАЛЬНОЕ ЦЕНТРИРОВАНИЕ ЧЕРЕЗ FLEXBOX */
+    display: flex;          
+    justify-content: center;
+    align-items: center;
+    
     transition: background 0.15s ease;
 }
 
 /* внутренняя кнопка */
-
 button::before {
     content: "";
-    position: absolute;
-    inset: 3px;
+    /* Вместо inset задаем фиксированный размер */
+    /* 60px (кнопка) - 10px (отступы по 5px с двух сторон) = 50px */
+    width: 50px;
+    height: 50px;
     border-radius: 50%;
     background: #111;
-    transition: transform 0.08s ease;
+    
+    /* transform-origin гарантирует, что уменьшение пойдет строго из центра */
+    transform-origin: center; 
+    transition: transform 0.08s ease, background 0.08s ease;
 }
 
 /* hover */
-
 button:hover::before {
     background: #1a1a1a;
 }
 
 /* нажатие */
-
 button:active::before {
     transform: scale(0.9);
 }
