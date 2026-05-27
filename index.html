@@ -140,18 +140,25 @@ body {
 ===================================== */
 
 button {
-    padding: 12px 24px;
-    border: none;
+    width: 48px;
+    height: 48px;
+    border: 2px solid red;
     background: #333;
-    color: white;
     cursor: pointer;
-    border-radius: 8px;
-    font-size: 16px;
+    border-radius: 4px;
     display: none;
-} 
-    
+    padding: 0;
+    transition:
+        transform 0.08s ease,
+        background 0.15s ease;
+}
+
 button:hover {
-    background: #555; 
+    background: #555;
+}
+
+button:active {
+    transform: scale(0.92);
 }
 
 /* =====================================
