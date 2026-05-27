@@ -140,17 +140,25 @@ body {
 ===================================== */
 
 button {
-    padding: 12px 24px;
-    border: none;
+    width: 48px;
+    height: 48px;
+    border: 6px solid red;
     background: #333;
-    color: white;
     cursor: pointer;
-    border-radius: 8px;
-    font-size: 16px;
+    border-radius: 4px;
+    display: none;
+    padding: 0;
+    transition:
+        transform 0.08s ease,
+        background 0.15s ease;
 }
 
 button:hover {
     background: #555;
+}
+
+button:active {
+    transform: scale(0.92);
 }
 
 /* =====================================
@@ -185,7 +193,7 @@ button:hover {
         <!-- КООРДИНАТЫ -->
         <div class="info" id="debugAngles">00:00</div>
         <!-- КНОПКА -->
-        <button onclick="sendCaptcha()">Check</button>
+        <button id="checkButton" onclick="sendCaptcha()"></button>
     </div>
 </div>
 
@@ -195,6 +203,7 @@ const minuteHand = document.getElementById("minuteHand");
 const clock = document.getElementById("clock");
 const debugAngles = document.getElementById("debugAngles");
 const currentTimeEl = document.getElementById("currentTime");
+const checkButton = document.getElementById("checkButton");
 
 hourHand.ondragstart = () => false;
 minuteHand.ondragstart = () => false;
@@ -348,11 +357,13 @@ function animate(now) {
     // если совпали — jazz
     if (hoursMatch && minutesMatch) {
         jazzLocked = true;
-        noiseAudio.volume = Math.max(0, noiseAudio.volume - 0.02);
-        jazzAudio.volume = Math.min(0.4, jazzAudio.volume + 0.02);
+        noiseAudio.volume = 0;
+        jazzAudio.volume = 0.4;
+        checkButton.style.display = "block";
     } else if (!jazzLocked) {
-        jazzAudio.volume = Math.max(0, jazzAudio.volume - 0.02);
-        noiseAudio.volume = Math.min(0.4, noiseAudio.volume + 0.02);
+        jazzAudio.volume = 0;
+        noiseAudio.volume = 0.4;
+        checkButton.style.display = "none";
     }   
     // Запрашиваем следующий кадр один раз для ВСЕГО
     requestAnimationFrame(animate);
