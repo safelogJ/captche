@@ -148,19 +148,22 @@ button {
     cursor: pointer;
     display: none;
     padding: 0;
-    position: relative;
-    transition: background 0.15s ease;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
-/* внутренняя кнопка */
+/* внутренний круг */
 
 button::before {
     content: "";
-    position: absolute;
-    inset: 5px;
+    width: 50px;
+    height: 50px;
     border-radius: 50%;
     background: #111;
-    transition: transform 0.08s ease;
+    transition:
+        transform 0.08s ease,
+        background 0.15s ease;
 }
 
 /* hover */
