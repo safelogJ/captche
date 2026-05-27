@@ -140,49 +140,18 @@ body {
 ===================================== */
 
 button {
-    width: 60px;
-    height: 60px;
+    padding: 12px 24px;
     border: none;
-    border-radius: 50%;
-    background: #444;
+    background: #333;
+    color: white;
     cursor: pointer;
-    padding: 0;
-
-    /* Оставляем твой display: none, если кнопка должна быть скрыта изначально */
-    display: none; 
-
-    /* Чтобы flex-выравнивание работало, когда кнопка ПОЯВИТСЯ на экране,
-       в JavaScript вместо button.style.display = 'block' 
-       нужно будет включать button.style.display = 'flex' */
-    justify-content: center;
-    align-items: center;
-
-    transition: background 0.15s ease;
-}
-
-/* Внутренний круг */
-button::before {
-    content: "";
-    /* Жестко задаем размеры (60px минус по 5px отступов с каждой стороны) */
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-    background: #111;
+    border-radius: 8px;
+    font-size: 16px;
+    display: none;
+} 
     
-    /* Важно для анимации */
-    display: block; 
-    transform-origin: center;
-    transition: transform 0.08s ease, background 0.08s ease;
-}
-
-/* Hover */
-button:hover::before {
-    background: #1a1a1a;
-}
-
-/* Нажатие */
-button:active::before {
-    transform: scale(0.9);
+button:hover {
+    background: #555; 
 }
 
 /* =====================================
@@ -383,7 +352,7 @@ function animate(now) {
         jazzLocked = true;
         noiseAudio.volume = 0;
         jazzAudio.volume = 0.4;
-        checkButton.style.display = "flex";
+        checkButton.style.display = "block";
     } else if (!jazzLocked) {
         jazzAudio.volume = 0;
         noiseAudio.volume = 0.4;
