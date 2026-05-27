@@ -147,8 +147,13 @@ button {
     background: #222;
     cursor: pointer;
     display: none;
-    position: relative;
     padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition:
+        transform 0.08s ease,
+        background 0.15s ease;
 }
 
 button::before {
@@ -156,14 +161,15 @@ button::before {
     width: 28px;
     height: 28px;
     background: red;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
 }
 
 button:hover {
     background: #333;
+}
+
+/* нажатие */
+button:active {
+    transform: scale(0.92);
 }
 
 /* =====================================
