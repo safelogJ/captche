@@ -10,7 +10,7 @@ RUN chmod +x /entrypoint.sh
 
 # Настраиваем Nginx так, чтобы он писал лог только для /solved
 RUN echo 'server { \
-    listen 443; \
+    listen 80; \
     location / { \
         root /usr/share/nginx/html; \
         index index.html; \
