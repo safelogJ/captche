@@ -230,12 +230,16 @@ let minuteAngle = 90;
 let activeHand = null;
 
 function sendCaptcha() {
-    Telegram.WebApp.sendData(JSON.stringify({
-        solved: jazzLocked,
-        hourAngle: hourAngle,
-        minuteAngle: minuteAngle,
-        displayTime: debugAngles.innerText
-    }));
+    if (!jazzLocked) return;
+
+    // Вызываем адрес в контейнере.
+    // Контейнер увидит этот запрос в логах и сам "стукнет" роутеру.
+    fetch('/solved').then(() => {
+        // После того как контейнер просигналил, подождем секунду и на роутер
+        setTimeout(() => {
+            window.location.href = 'https://192.168.88.1';
+        }, 1000);
+    });
 }
 
 /* =========================
