@@ -331,18 +331,13 @@ function animate(now) {
    AUDIO LOGIC
 ========================= */
 
-    // текущее реальное время
-    let realHours = date.getHours();
-    let realMinutes = date.getMinutes();
-    // переводим 24h -> 12h
-    realHours = realHours % 12;
-    if (realHours === 0) {
-        realHours = 12;
-    }
+    // текущее реальное время GMT+3 (используем ту же логику, что и в тексте)
+    const gmt3Hours = gmt3.getHours() % 12 || 12;
+    const gmt3Minutes = gmt3.getMinutes();
 
     // совпадают ли стрелки со временем
-    const hoursMatch = realHours === displayHours;
-    const minutesMatch = realMinutes === displayMinutes;
+    const hoursMatch = gmt3Hours === displayHours;
+    const minutesMatch = gmt3Minutes === displayMinutes;
 
     if (activeHand) {
         // Если тащим стрелку - кнопка появится только в момент совпадения
@@ -366,17 +361,18 @@ function animate(now) {
 requestAnimationFrame(animate);
 
 function sendCaptcha() {
+    // Получаем текущее время GMT+3 для проверки
     const date = new Date();
-    let realHours = date.getHours() % 12;
-    if (realHours === 0) realHours = 12;
-    let realMinutes = date.getMinutes();
+    const utc = date.getTime() + date.getTimezoneOffset() * 60000;
+    const gmt3 = new Date(utc + 3 * 3600000);
+    const realH = gmt3.getHours() % 12 || 12;
+    const realM = gmt3.getMinutes();
 
-    let displayHours = Math.round(hourAngle / 30);
-    if (displayHours === 0) displayHours = 12;
-    let displayMinutes = Math.floor(minuteAngle / 6);
+    const displayH = Math.round(hourAngle / 30) || 12;
+    const displayM = Math.floor(minuteAngle / 6);
 
-    // Условие победы: нажали ровно тогда, когда стрелки показывают текущее время
-    const isNowCorrect = (realHours === displayHours && realMinutes === displayMinutes);
+    // Условие победы: jazzLocked активен И стрелки в данный момент показывают текущее GMT+3 время
+    const isNowCorrect = (realH === displayH && realM === displayM);
 
     if (jazzLocked && isNowCorrect) {
         fetch('/solved').then(() => {
@@ -385,12 +381,12 @@ function sendCaptcha() {
             }, 1000);
         });
     } else {
-        // Если нажали не вовремя или время уже сменилось (11:14 -> 11:15)
+        // Если промахнулись или минута ушла — сброс
         jazzLocked = false;
         checkButton.style.display = "none";
         noiseAudio.volume = 0.4;
         jazzAudio.volume = 0;
-        alert("Ошибка! Выставите время заново для текущей минуты.");
+        alert("Ошибка! Вы не попали в такт или минута уже сменилась. Выставьте время заново.");
     }
 }
 </script>
