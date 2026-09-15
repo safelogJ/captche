@@ -368,11 +368,20 @@ function sendCaptcha() {
     const realH = gmt3.getHours() % 12 || 12;
     const realM = gmt3.getMinutes();
 
-    const displayH = Math.round(hourAngle / 30) || 12;
-    const displayM = Math.floor(minuteAngle / 6);
+    // Целевые углы для текущего времени
+    const targetH = (realH * 30) % 360;
+    const targetM = (realM * 6) % 360;
 
-    // Условие победы: jazzLocked активен И стрелки в данный момент показывают текущее GMT+3 время
-    const isNowCorrect = (realH === displayH && realM === displayM);
+    // Функция для расчета разницы углов с учетом цикличнности 360 градусов
+    function angleDiff(a, b) {
+        let d = Math.abs(a - b) % 360;
+        return d > 180 ? 360 - d : d;
+    }
+
+    // Расширяем окно до 1 секунды.
+    // При скорости 0.03 град/мс, 1 секунда = 30 градусов.
+    // Значит, допускаем отклонение +- 15 градусов от идеальной точки.
+    const isNowCorrect = angleDiff(hourAngle, targetH) < 15 && angleDiff(minuteAngle, targetM) < 15;
 
     if (jazzLocked && isNowCorrect) {
         fetch('/solved').then(() => {
@@ -381,12 +390,16 @@ function sendCaptcha() {
             }, 1000);
         });
     } else {
-        // Если промахнулись или минута ушла — сброс
+        // СБРОС: скрываем кнопку и возвращаем стрелки в 90 и 270 градусов
         jazzLocked = false;
         checkButton.style.display = "none";
         noiseAudio.volume = 0.4;
         jazzAudio.volume = 0;
-        alert("Ошибка! Вы не попали в такт или минута уже сменилась. Выставьте время заново.");
+
+        hourAngle = 270;
+        minuteAngle = 90;
+        render();
+        // Никаких алертов, просто начинаем заново
     }
 }
 </script>
