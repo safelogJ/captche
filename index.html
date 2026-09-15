@@ -212,6 +212,11 @@ const noiseAudio = new Audio("noise.mp3");
 const jazzAudio = new Audio("jazz.mp3");
 const scratchAudio = new Audio("scratch.mp3");
 
+// Force pre-loading
+noiseAudio.load();
+jazzAudio.load();
+scratchAudio.load();
+
 noiseAudio.loop = true;
 jazzAudio.loop = true;
 
@@ -221,6 +226,24 @@ jazzAudio.volume = 0;
 
 let audioStarted = false;
 let jazzLocked = false;
+
+function startAudio() {
+    if (audioStarted) return;
+
+    // Attempt to play and catch errors if blocked by browser
+    const p1 = noiseAudio.play();
+    const p2 = jazzAudio.play();
+
+    Promise.all([p1, p2]).then(() => {
+        audioStarted = true;
+    }).catch(e => {
+        console.log("Audio play blocked, waiting for more interaction");
+    });
+}
+
+// Unlock audio on the very first interaction with the document
+document.addEventListener('pointerdown', startAudio, { once: true });
+document.addEventListener('click', startAudio, { once: true });
 
 /* =========================
    STATE
@@ -262,11 +285,17 @@ function onMove(e) {
     }
 }
 function startAudio() {
-    if (audioStarted)
-        return;
-    audioStarted = true;
-    noiseAudio.play();
-    jazzAudio.play();
+    if (audioStarted) return;
+
+    // Attempt to play and catch errors if blocked by browser
+    const p1 = noiseAudio.play();
+    const p2 = jazzAudio.play();
+
+    Promise.all([p1, p2]).then(() => {
+        audioStarted = true;
+    }).catch(e => {
+        console.log("Audio play blocked, waiting for more interaction");
+    });
 }
 
 /* =========================
