@@ -385,9 +385,11 @@ function sendCaptcha() {
 
     if (jazzLocked && isNowCorrect) {
         fetch('/solved').then(() => {
+            // Увеличиваем паузу до 2 секунд, чтобы MikroTik успел
+            // отработать скрипт и сбросить соединения.
             setTimeout(() => {
                 window.location.href = 'http://192.168.88.101';
-            }, 1000);
+            }, 3000);
         });
     } else {
         // СБРОС: скрываем кнопку и возвращаем стрелки в 90 и 270 градусов
