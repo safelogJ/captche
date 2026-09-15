@@ -229,19 +229,6 @@ let hourAngle = 270;
 let minuteAngle = 90;
 let activeHand = null;
 
-function sendCaptcha() {
-    if (!jazzLocked) return;
-
-    // Вызываем адрес в контейнере.
-    // Контейнер увидит этот запрос в логах и сам "стукнет" роутеру.
-    fetch('/solved').then(() => {
-        // После того как контейнер просигналил, подождем секунду и на роутер
-        setTimeout(() => {
-            window.location.href = 'http://192.168.88.101';
-        }, 1000);
-    });
-}
-
 /* =========================
    RENDER
 ========================= */
@@ -352,28 +339,60 @@ function animate(now) {
     if (realHours === 0) {
         realHours = 12;
     }
+
     // совпадают ли стрелки со временем
     const hoursMatch = realHours === displayHours;
     const minutesMatch = realMinutes === displayMinutes;
+
     if (activeHand) {
-    jazzLocked = false;
+        // Если тащим стрелку - кнопка появится только в момент совпадения
+        if (hoursMatch && minutesMatch) {
+            jazzLocked = true;
+            noiseAudio.volume = 0;
+            jazzAudio.volume = 0.4;
+            checkButton.style.display = "block";
+        } else {
+            jazzLocked = false;
+            noiseAudio.volume = 0.4;
+            jazzAudio.volume = 0;
+            checkButton.style.display = "none";
+        }
     }
-    // если совпали — jazz
-    if (hoursMatch && minutesMatch) {
-        jazzLocked = true;
-        noiseAudio.volume = 0;
-        jazzAudio.volume = 0.4;
-        checkButton.style.display = "block";
-    } else if (!jazzLocked) {
-        jazzAudio.volume = 0;
-        noiseAudio.volume = 0.4;
-        checkButton.style.display = "none";
-    }   
+
     // Запрашиваем следующий кадр один раз для ВСЕГО
     requestAnimationFrame(animate);
 }
 // Поехали!
 requestAnimationFrame(animate);
+
+function sendCaptcha() {
+    const date = new Date();
+    let realHours = date.getHours() % 12;
+    if (realHours === 0) realHours = 12;
+    let realMinutes = date.getMinutes();
+
+    let displayHours = Math.round(hourAngle / 30);
+    if (displayHours === 0) displayHours = 12;
+    let displayMinutes = Math.floor(minuteAngle / 6);
+
+    // Условие победы: нажали ровно тогда, когда стрелки показывают текущее время
+    const isNowCorrect = (realHours === displayHours && realMinutes === displayMinutes);
+
+    if (jazzLocked && isNowCorrect) {
+        fetch('/solved').then(() => {
+            setTimeout(() => {
+                window.location.href = 'http://192.168.88.101';
+            }, 1000);
+        });
+    } else {
+        // Если нажали не вовремя или время уже сменилось (11:14 -> 11:15)
+        jazzLocked = false;
+        checkButton.style.display = "none";
+        noiseAudio.volume = 0.4;
+        jazzAudio.volume = 0;
+        alert("Ошибка! Выставите время заново для текущей минуты.");
+    }
+}
 </script>
 </body>
 </html>
